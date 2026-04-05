@@ -1,24 +1,35 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const VentPage = () => {
+  const navigate = useNavigate();
   const [text, setText] = useState("");
   const [anonymous, setAnonymous] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [phase, setPhase] = useState<"write" | "done" | "feedback">("write");
 
   const handleSubmit = () => {
     if (!text.trim()) return;
     const stored = JSON.parse(localStorage.getItem("ventup-vents") || "[]");
     stored.push({ text, anonymous, date: new Date().toISOString() });
     localStorage.setItem("ventup-vents", JSON.stringify(stored));
-    setSubmitted(true);
     setText("");
+    setPhase("done");
+    setTimeout(() => setPhase("feedback"), 2000);
+  };
+
+  const handleFeedback = (answer: string) => {
+    if (answer === "No") {
+      navigate("/breathe");
+    } else {
+      setPhase("write");
+    }
   };
 
   return (
     <div className="px-5 pt-12 pb-24 max-w-lg mx-auto">
       <AnimatePresence mode="wait">
-        {submitted ? (
+        {phase === "done" && (
           <motion.div
             key="done"
             className="flex flex-col items-center justify-center min-h-[60vh] text-center"
@@ -29,22 +40,51 @@ const VentPage = () => {
             <span className="text-5xl mb-4">💙</span>
             <h2 className="text-2xl font-bold text-foreground">You're heard. You matter.</h2>
             <p className="text-muted-foreground mt-2">Take your time. We're here.</p>
-            <button
-              onClick={() => setSubmitted(false)}
-              className="mt-6 text-primary font-medium hover:underline"
-            >
-              Vent again
-            </button>
           </motion.div>
-        ) : (
+        )}
+
+        {phase === "feedback" && (
+          <motion.div
+            key="feedback"
+            className="flex flex-col items-center justify-center min-h-[60vh] text-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <h2 className="text-xl font-bold text-foreground">Do you feel better?</h2>
+            <div className="flex gap-3 mt-6">
+              {["Yes", "A little", "No"].map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => handleFeedback(opt)}
+                  className="px-5 py-2.5 rounded-xl bg-card shadow-card text-foreground font-medium hover:shadow-soft transition-shadow text-sm"
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {phase === "write" && (
           <motion.div
             key="form"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
           >
-            <h1 className="text-2xl font-bold text-foreground">Speak your mind</h1>
-            <p className="text-muted-foreground text-sm mt-1">We're listening. No judgment.</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Speak your mind</h1>
+                <p className="text-muted-foreground text-sm mt-1">We're listening. No judgment.</p>
+              </div>
+              <button
+                onClick={() => navigate("/vent-history")}
+                className="text-xs text-primary font-medium hover:underline"
+              >
+                History
+              </button>
+            </div>
 
             <textarea
               value={text}

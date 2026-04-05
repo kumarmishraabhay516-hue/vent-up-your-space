@@ -116,6 +116,17 @@ const InsightsPage = () => {
               {data.total} mood{data.total !== 1 ? "s" : ""} recorded
             </p>
           </motion.div>
+
+          <motion.div
+            className="mt-4 bg-card rounded-2xl p-4 shadow-card text-center"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <p className="text-sm text-muted-foreground">
+              Try taking small breaks and checking in with yourself. 💜
+            </p>
+          </motion.div>
         </>
       )}
 

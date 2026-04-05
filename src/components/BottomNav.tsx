@@ -1,4 +1,4 @@
-import { Home, PenLine, Timer, BarChart3 } from "lucide-react";
+import { Home, PenLine, Timer, BarChart3, Wind, Settings } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -6,7 +6,9 @@ const tabs = [
   { path: "/", icon: Home, label: "Home" },
   { path: "/vent", icon: PenLine, label: "Vent" },
   { path: "/focus", icon: Timer, label: "Focus" },
+  { path: "/breathe", icon: Wind, label: "Breathe" },
   { path: "/insights", icon: BarChart3, label: "Insights" },
+  { path: "/settings", icon: Settings, label: "Settings" },
 ];
 
 const BottomNav = () => {
@@ -22,21 +24,21 @@ const BottomNav = () => {
             <button
               key={path}
               onClick={() => navigate(path)}
-              className="relative flex flex-col items-center gap-0.5 px-4 py-2"
+              className="relative flex flex-col items-center gap-0.5 px-2 py-2"
             >
               {active && (
                 <motion.div
                   layoutId="nav-indicator"
-                  className="absolute -top-px left-2 right-2 h-0.5 gradient-calm rounded-full"
+                  className="absolute -top-px left-1 right-1 h-0.5 gradient-calm rounded-full"
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
               <Icon
-                size={20}
+                size={18}
                 className={active ? "text-primary" : "text-muted-foreground"}
               />
               <span
-                className={`text-[11px] font-medium ${
+                className={`text-[10px] font-medium ${
                   active ? "text-primary" : "text-muted-foreground"
                 }`}
               >
